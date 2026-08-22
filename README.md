@@ -10,6 +10,8 @@ Free to use in commercial products. Keep the attribution mark, and that is the w
 
 *Inspired by [TradingView](https://www.tradingview.com/)'s [Lightweight Charts](https://github.com/tradingview/lightweight-charts). Engine written from scratch in C++.*
 
+### [▶ Try the live demo](https://amritshr.github.io/knv2-lightweight-charts/)
+
 [Getting started](docs/getting-started.md) · [API](docs/api.md) · [Live data](docs/data-sources.md) · [Migrating from lightweight-charts](docs/migrating-from-lightweight-charts.md) · [Licence](LICENSE.md)
 
 <sub>TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc. Not affiliated with or endorsed by TradingView, Inc. The engine code is our own; no TradingView code is used.</sub>
@@ -182,17 +184,21 @@ React, Next.js (including the App Router), Vue, Svelte and plain HTML:
 
 ## Examples
 
-Runnable, with no build step and no dependencies:
+**Open them in your browser — nothing to install:**
+
+| | |
+|---|---|
+| **[▶ Vanilla](https://amritshr.github.io/knv2-lightweight-charts/examples/vanilla/)** | one file, plain HTML — five chart types, themes, drawing tools |
+| **[▶ React](https://amritshr.github.io/knv2-lightweight-charts/examples/react/)** | the React component, crosshair legend, tool dock |
+| **[▶ Live ticker](https://amritshr.github.io/knv2-lightweight-charts/examples/live-websocket/)** | a tick stream driving `update()` — candles forming in real time |
+
+Or run them from a clone, with no build step and no dependencies:
 
 ```bash
 node examples/serve.mjs        # → http://localhost:8080
 ```
 
-| | |
-|---|---|
-| [`examples/vanilla`](examples/vanilla) | one file, plain HTML — chart types, themes, drawing tools |
-| [`examples/react`](examples/react) | the React component, crosshair legend, tool dock |
-| [`examples/live-websocket`](examples/live-websocket) | a live feed driving `update()` |
+Source: [`examples/vanilla`](examples/vanilla) · [`examples/react`](examples/react) · [`examples/live-websocket`](examples/live-websocket)
 
 ## Licence in one paragraph
 

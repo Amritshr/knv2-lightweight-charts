@@ -10,6 +10,18 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.7
+
+### Added
+
+- **Direct links to the live demos**, hosted on GitHub Pages — a "Try the live
+  demo" link at the top of the README, and the three examples linked as pages
+  you can open rather than files you have to clone and serve first.
+- A `SITE` constant in the build, so moving the demo to a custom domain later is
+  one line rather than a hunt through every document.
+
+---
+
 ## 1.0.6
 
 ### Changed
