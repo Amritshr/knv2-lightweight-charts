@@ -2,7 +2,7 @@
 
 *Package: `knv2-lightweight-charts`*
 
-**Version 1.0.0 · Copyright © 2026 Amrit Shrestha. All rights reserved.**
+**Version 1.0.1 · Copyright © 2026 Amrit Shrestha. All rights reserved.**
 
 This is a **proprietary licence**, not an open-source one. The software is free
 to use, including in commercial and closed-source products, on the conditions
@@ -26,9 +26,20 @@ Software.
 - **"Application"** — a website, web application, mobile or desktop application,
   or embedded product developed by You in which the Software is used to display
   charts to end users.
-- **"Attribution Mark"** — the visual mark reading **"Charts by KNv2"**, together
-  with its logo glyph and its hyperlink, which the Software renders inside every
-  chart container.
+- **"Attribution Mark"** — the visual mark the Software renders inside every
+  chart container, consisting of **all three** of the following together, plus
+  its hyperlink:
+
+  | | |
+  |---|---|
+  | the **K2 logo** | the monogram badge at the left of the mark |
+  | the **product text** | the words "Charts by KNv2" |
+  | the **author credit** | the words "Amrit Shrestha" |
+
+  Rendered, it reads: **K2  Charts by KNv2 · Amrit Shrestha**
+
+  ⚠ Each of the three is a required part. A mark displaying some but not all of
+  them is not the Attribution Mark and does not satisfy §3.
 
 ## 2. Grant of licence
 
@@ -53,13 +64,17 @@ domains, page views, or end users.
 ## 3. ⚠ Attribution — the condition of the grant
 
 **The Attribution Mark must remain visible, legible and unobstructed on every
-chart the Software renders, at all times, in every Application.**
+chart the Software renders, at all times, in every Application — including the
+K2 logo, the text "Charts by KNv2", and the credit to Amrit Shrestha,
+all three.**
 
 This is the consideration for a licence that is otherwise free. Specifically,
 You must not:
 
 **(a)** remove, delete, disable, or prevent the rendering of the Attribution
-Mark;
+Mark, **or of any one of its three parts** — removing the K2 logo
+while keeping the text, or removing the credit to Amrit Shrestha while keeping
+the logo, is a breach of this clause exactly as removing the whole mark is;
 
 **(b)** hide or degrade it by any means — including but not limited to CSS
 (`display`, `visibility`, `opacity`, `clip-path`, `transform`, `text-indent`,
@@ -67,9 +82,10 @@ negative offsets, zero dimensions, or z-order), DOM manipulation, overlaying
 another element on top of it, or rendering it in a colour that makes it
 illegible against its background;
 
-**(c)** alter its text, its logo glyph, or the destination of its hyperlink, or
-present it in a way that suggests any party other than Licensor authored the
-Software;
+**(c)** alter the K2 logo, the product text, the author credit, or
+the destination of the hyperlink; substitute Your own name, logo, or branding
+for any of them; or present the Software in a way that suggests any party other
+than Amrit Shrestha authored it;
 
 **(d)** modify, patch, re-bundle, or otherwise circumvent the mechanism in the
 Software that renders and monitors the Attribution Mark; or
@@ -80,12 +96,15 @@ done, or instruct, assist, or encourage another person to do any of the above.
 **What You may do:** the Attribution Mark may be **moved** between the four
 corners of the chart using the documented `attributionPosition` option. You may
 place Your own branding, logo, watermark, or UI anywhere else on or around the
-chart, including behind the chart data. See `docs/attribution.md`.
+chart, including behind the chart data — Your branding and the Attribution Mark
+are expected to coexist, and nothing here restricts how prominently You present
+Your own. See `docs/attribution.md`.
 
-**Enforcement.** The Software monitors the Attribution Mark at runtime. When the
-Mark has been hidden or removed, the Software emits a console warning naming
-this clause and, if the condition persists, stops rendering that chart and
-displays a notice in its place. This behaviour is a designed and disclosed
+**Enforcement.** The Software monitors the Attribution Mark at runtime, checking
+the K2 logo, the product text and the author credit **each
+separately**. When any one of them has been hidden or removed, the Software
+emits a console warning naming this clause and, if the condition persists, stops
+rendering that chart and displays a notice in its place. This behaviour is a designed and disclosed
 feature of the Software, not a defect, and interfering with it is a breach of
 §3(d).
 

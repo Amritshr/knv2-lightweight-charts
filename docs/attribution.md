@@ -13,15 +13,28 @@ living with it comfortably.
 
 A small element the SDK adds as the last child of your chart container:
 
-> ▎▍▌ **Charts by KNv2**
+> `K2`  **Charts by KNv2** · Amrit Shrestha
 
-- about 110 × 18 px, 11 px type
+It has **three parts, and the licence requires all three**:
+
+| part | what it is |
+|---|---|
+| **`K2`** | the logo — a monogram badge at the left of the mark |
+| **Charts by KNv2** | the product text |
+| **Amrit Shrestha** | the author credit |
+
+- about 220 × 19 px, 11 px type
 - a link to `https://github.com/Amritshr/knv2-lightweight-charts`, opening in a new tab
 - colour and background adapt to your chart's background — light text on dark,
   dark text on light
-- inline SVG glyph, no image request, no font download, no network call
+- pure text and CSS: no image request, no font download, no network call
 - `pointer-events` only on itself; it never intercepts a pan, a zoom, or a
   drawing gesture
+
+⚠ **Removing any one part is the same breach as removing the whole mark.**
+Keeping the text but dropping the `K2` logo, or keeping the logo but
+dropping the credit to Amrit Shrestha, does not satisfy §3 — and the runtime
+check inspects each of the three separately.
 
 ## What you may do
 
@@ -58,11 +71,14 @@ is welcome. `NOTICE` has suggested wording. It is not required.
 
 ## What you may not do
 
-❌ Remove it, delete it, or stop it rendering.
+❌ Remove it, delete it, or stop it rendering — **in whole or in part**. The
+`K2` logo, the text, and the credit to Amrit Shrestha are each
+required.
 ❌ Hide it with CSS — `display`, `visibility`, `opacity`, `clip-path`,
 `transform`, `text-indent`, negative offsets, zero size, or z-order.
 ❌ Cover it with another element.
-❌ Change its text, its glyph, or its link.
+❌ Change its text, its `K2` logo, the author credit, or its link,
+or substitute your own name or branding for any of them.
 ❌ Patch the bundle to disable the mechanism.
 ❌ Ship a build to anyone else with any of the above done.
 
@@ -102,7 +118,8 @@ It is almost always one of these:
 
 | symptom in the console | cause |
 |---|---|
-| `opacity:0` / `visibility:hidden` | a global CSS rule matching `a` or `svg` inside your container |
+| `the K2 logo …` / `the author credit …` | a rule matching `span` inside your container, hiding one part of the mark |
+| `opacity:0` / `visibility:hidden` | a global CSS rule matching `a` or `span` inside your container |
 | `display:none` | an `!important` reset, or a `[hidden]` sweep |
 | `rendered 0×0px` | the container has `overflow:hidden` and no room in that corner |
 | `positioned outside the chart` | the container is smaller than you think, or has a transform |

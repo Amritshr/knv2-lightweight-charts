@@ -9,14 +9,19 @@ that the "Charts by KNv2" attribution mark remain visible on every chart.
 ATTRIBUTION
 --------------------------------------------------------------------------
 
-The Software renders its own attribution mark inside every chart container.
-Nothing further is required of you.
+The Software renders its own attribution mark inside every chart container:
+
+    [K2]  Charts by KNv2  -  Amrit Shrestha
+
+All three parts -- the K2 logo, the product text and the credit to
+Amrit Shrestha -- must remain visible. Nothing further is required of you.
 
 If you additionally credit this project in an "about", "licences", or
 "open source" screen -- which is appreciated but not required -- the
 following text is suitable:
 
     Charts rendered by Charts by KNv2
+    Created by Amrit Shrestha
     https://github.com/Amritshr/knv2-lightweight-charts
     (c) 2026 Amrit Shrestha. Used under licence.
 

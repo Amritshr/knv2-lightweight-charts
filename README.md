@@ -97,7 +97,7 @@ Full walkthrough: **[docs/getting-started.md](docs/getting-started.md)**.
 |---|---|---|
 | `knv2lw.wasm` — the engine | 189,003 B | 78 KB |
 | `knv2lw.js` — the loader | 35,074 B | 14 KB |
-| `knv2-lightweight-charts.js` — the SDK | 17,933 B | 7 KB |
+| `knv2-lightweight-charts.js` — the SDK | 19,618 B | 8 KB |
 | **total** | | **100 KB** |
 
 ⚠ **This is bigger than `lightweight-charts`' ~45 KB and we are not going to
@@ -185,9 +185,10 @@ node examples/serve.mjs        # → http://localhost:8080
 ## Licence in one paragraph
 
 Free for anything, including commercial and closed-source products, with no
-limit on developers, domains, charts, or users. **You must keep the
-"Charts by KNv2" mark visible on every chart** — you may move it to any corner
-you like, and you may put your own branding anywhere else. You must not modify
+limit on developers, domains, charts, or users. **You must keep the attribution
+mark visible on every chart** — all three parts of it: the `K2` logo,
+the text "Charts by KNv2", and the credit to **Amrit Shrestha**. You may move it
+to any corner you like, and you may put your own branding anywhere else. You must not modify
 the compiled engine, reverse engineer it, or republish it as a standalone
 package. No warranty; this software draws charts and does not give financial
 advice.
@@ -195,8 +196,10 @@ advice.
 The full terms are in **[LICENSE.md](LICENSE.md)** and they are short. §3
 (attribution) and §4 (restrictions) are the two that matter.
 
-⚠ **The attribution mark is enforced at runtime.** Hide it and the chart warns
-in the console, then stops rendering. This is disclosed, deliberate, and
+⚠ **The attribution mark is enforced at runtime**, and each of its three parts
+is checked separately — dropping just the logo or just the credit is the same
+breach as removing the whole mark. Hide any part and the chart warns in the
+console, then stops rendering. This is disclosed, deliberate, and
 documented in **[docs/attribution.md](docs/attribution.md)** — which also
 explains how to style around it and what to do if a CSS conflict trips it by
 accident.

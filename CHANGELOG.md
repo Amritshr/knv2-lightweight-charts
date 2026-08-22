@@ -10,6 +10,20 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.1
+
+### Changed
+
+- **The attribution mark now has three required parts** — the **K2** logo, the
+  text "Charts by KNv2", and the author credit to **Amrit Shrestha**. The
+  licence (§1, §3) requires all three, and the runtime check inspects each one
+  separately: hiding just the logo or just the credit is the same breach as
+  removing the whole mark.
+- The logo is a text monogram rather than an SVG glyph, so it renders in any
+  font stack, needs no asset request, and can be verified by the guard.
+
+---
+
 ## 1.0.0
 
 First public release.
