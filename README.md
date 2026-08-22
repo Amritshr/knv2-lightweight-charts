@@ -8,6 +8,8 @@
 
 Free to use in commercial products. Keep the attribution mark, and that is the whole price.
 
+*API inspired by TradingView's Lightweight Charts. Engine written from scratch in C++.*
+
 [Getting started](docs/getting-started.md) · [API](docs/api.md) · [Live data](docs/data-sources.md) · [Migrating from lightweight-charts](docs/migrating-from-lightweight-charts.md) · [Licence](LICENSE.md)
 
 </div>
@@ -23,9 +25,15 @@ layout, the input handling and the render loop — is compiled C++ running insid
 WebAssembly, drawing through WebGL2. **No JavaScript runs on a frame.** Panning
 a 100,000-bar series uploads nothing and allocates nothing.
 
-It is packaged deliberately like TradingView's `lightweight-charts`: one small
-artifact, a small API, many charts on a page. If you have used that library, you
-already know this one — see the [migration guide](docs/migrating-from-lightweight-charts.md).
+**It is inspired by TradingView's Lightweight Charts**, deliberately: one small
+artifact, a small API, many charts on a page. That library set the standard for
+what a lean web charting library should feel like, and this one follows its
+shape on purpose — if you have used it, you already know this one. See the
+[migration guide](docs/migrating-from-lightweight-charts.md).
+
+The inspiration is the **API and the packaging**. The renderer underneath is a
+different animal: an independent C++ engine compiled to WebAssembly and drawing
+through WebGL2, rather than Canvas2D driven from JavaScript.
 
 ```js
 import { createChart } from './dist/knv2-lightweight-charts.js';
@@ -242,6 +250,27 @@ See [docs/integrity.md](docs/integrity.md).
 | [Integrity & security](docs/integrity.md) | checksums, SRI, CSP, serving the binary |
 | [Troubleshooting](docs/troubleshooting.md) | blank canvas, blurry chart, leaks, heap limits |
 | [Migrating](docs/migrating-from-lightweight-charts.md) | call-by-call mapping |
+
+## Credits and inspiration
+
+This project is **inspired by [TradingView](https://www.tradingview.com/)'s
+[Lightweight Charts](https://github.com/tradingview/lightweight-charts)** — the
+library that showed how small, focused and pleasant a web charting API can be.
+Its design is why this package is a factory function rather than a framework,
+why one chart draws one series, and why the option names will look familiar.
+Credit where it is due.
+
+⚠ **The inspiration is the API surface and the packaging — not the code.** The
+rendering engine here is an independent implementation written in C++ and
+compiled to WebAssembly. No TradingView source code, assets, fonts, or
+trademarks are used, copied, decompiled, or redistributed by this project, and
+no part of it is derived from TradingView software.
+
+> TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc.
+> **This project is not affiliated with, endorsed by, sponsored by, or connected
+> to TradingView, Inc. in any way.** References to Lightweight Charts throughout
+> this documentation are nominative, comparative and descriptive only — made so
+> developers can evaluate the two and migrate between them.
 
 ## Support
 

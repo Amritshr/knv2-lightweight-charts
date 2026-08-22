@@ -53,10 +53,21 @@ point and is never bundled.
 TRADE MARKS
 --------------------------------------------------------------------------
 
+INSPIRATION AND NON-AFFILIATION
+
+This project's API design and packaging are inspired by TradingView's
+Lightweight Charts. That inspiration is limited to the shape of the public
+interface and the way the library is distributed.
+
+No TradingView source code, assets, fonts or trade marks are used, copied,
+decompiled or redistributed by this project, and no part of this project is
+derived from TradingView software. The rendering engine is an independent
+implementation written in C++ and compiled to WebAssembly.
+
 TradingView and Lightweight Charts are trade marks of TradingView, Inc.
-This project is not affiliated with, endorsed by, or sponsored by
-TradingView, Inc. References to "lightweight-charts" in this project's
-documentation are comparative and descriptive only, made to help developers
-evaluate and migrate between the two libraries.
+This project is not affiliated with, endorsed by, sponsored by or connected
+to TradingView, Inc. in any way. References to "lightweight-charts" in this
+project's documentation are nominative, comparative and descriptive only,
+made to help developers evaluate and migrate between the two libraries.
 
 All other trade marks are the property of their respective owners.

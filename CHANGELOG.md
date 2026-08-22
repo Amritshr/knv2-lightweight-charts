@@ -10,6 +10,22 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.2
+
+### Added
+
+- Explicit credit to **TradingView's Lightweight Charts** as the inspiration for
+  this package's API design and packaging, in the README and in `NOTICE`.
+- A clear statement of what that inspiration covers and does not: the public
+  interface and the distribution shape, **not** the code. No TradingView source,
+  assets, fonts or trade marks are used, copied, decompiled or redistributed,
+  and no part of this project is derived from TradingView software.
+- A strengthened non-affiliation notice. TradingView™ and Lightweight Charts™
+  are trade marks of TradingView, Inc.; this project is not affiliated with,
+  endorsed by, sponsored by or connected to TradingView, Inc.
+
+---
+
 ## 1.0.1
 
 ### Changed
