@@ -4,16 +4,13 @@ The API was shaped deliberately to make this a small diff. The main structural
 difference: **there are no series objects.** One chart draws one series, so
 `chart.addCandlestickSeries().setData(bars)` collapses to `chart.setData(bars)`.
 
-> **Credit where it is due:** this package's API is inspired by
+> This package's API is modelled on
 > [Lightweight Charts](https://github.com/tradingview/lightweight-charts), which
-> is why the migration below is as small as it is. It is a very good library,
-> and for plenty of projects it remains the right choice — the comparison in the
-> next section says where, honestly.
+> is why the migration below is small. For plenty of projects that library
+> remains the right choice — the next section says where.
 >
 > TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc. This
-> project is not affiliated with or endorsed by TradingView, Inc. Every
-> reference here is nominative and descriptive, to help you evaluate and
-> migrate.
+> project is not affiliated with or endorsed by TradingView, Inc.
 
 ---
 
@@ -34,9 +31,8 @@ difference: **there are no series objects.** One chart draws one series, so
 or indicator series on the same chart. **Do migrate** if you want the drawing
 tools, large-series performance, or a main thread that stays free.
 
-There is no wrong answer here. Lightweight Charts is smaller, open, and
-battle-tested across a very large number of sites; this package trades bytes for
-a GPU renderer and a drawing layer. Pick on your requirement.
+Lightweight Charts is smaller and open source; this package trades bytes for a
+GPU renderer and a drawing layer. Pick on your requirement.
 
 ---
 

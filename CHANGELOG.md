@@ -10,6 +10,20 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.5
+
+### Changed
+
+- **The TradingView credit is now written plainly.** The previous wording
+  ("would not have the shape it has without", "set the standard", "thank you for
+  setting the bar") overstated it — good ideas about small APIs are not unique
+  to one library, and effusive praise reads as less sincere, not more. The
+  credit is now short and factual: the API is modelled on Lightweight Charts,
+  here is specifically what was taken from it, credit to that project, and use
+  it instead if it suits you better. Same credit, no inflation.
+
+---
+
 ## 1.0.4
 
 ### Added

@@ -53,17 +53,12 @@ point and is never bundled.
 TRADE MARKS
 --------------------------------------------------------------------------
 
-INSPIRATION, CREDIT AND NON-AFFILIATION
+CREDIT AND NON-AFFILIATION
 
-This project's API design and packaging are inspired by TradingView's
-Lightweight Charts, and we gratefully acknowledge it. That library showed
-that a charting library could be one small artifact with a small API, and
-this project follows its lead on the shape of the public interface and on
-the way the library is distributed. Our thanks to the TradingView team and
-to the Lightweight Charts contributors.
-
-That inspiration is limited to the shape of the public interface and the
-way the library is distributed.
+This project's API design and packaging are modelled on TradingView's
+Lightweight Charts, which we credit and acknowledge. That modelling is
+limited to the shape of the public interface and the way the library is
+distributed.
 
 No TradingView source code, assets, fonts or trade marks are used, copied,
 decompiled or redistributed by this project, and no part of this project is
