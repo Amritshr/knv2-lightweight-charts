@@ -251,26 +251,56 @@ See [docs/integrity.md](docs/integrity.md).
 | [Troubleshooting](docs/troubleshooting.md) | blank canvas, blurry chart, leaks, heap limits |
 | [Migrating](docs/migrating-from-lightweight-charts.md) | call-by-call mapping |
 
-## Credits and inspiration
+## Credits
 
-This project is **inspired by [TradingView](https://www.tradingview.com/)'s
-[Lightweight Charts](https://github.com/tradingview/lightweight-charts)** — the
-library that showed how small, focused and pleasant a web charting API can be.
-Its design is why this package is a factory function rather than a framework,
-why one chart draws one series, and why the option names will look familiar.
-Credit where it is due.
+### Inspired by Lightweight Charts
 
-⚠ **The inspiration is the API surface and the packaging — not the code.** The
-rendering engine here is an independent implementation written in C++ and
-compiled to WebAssembly. No TradingView source code, assets, fonts, or
-trademarks are used, copied, decompiled, or redistributed by this project, and
-no part of it is derived from TradingView software.
+This package would not have the shape it has without
+**[TradingView](https://www.tradingview.com/)'s
+[Lightweight Charts](https://github.com/tradingview/lightweight-charts)**.
+
+Before it, putting a chart on a web page usually meant adopting a framework — a
+plugin system, a widget lifecycle, a configuration object the size of a small
+application. Lightweight Charts made the case that a charting library could be
+one small file, a handful of methods, and good defaults instead of a hundred
+options. It is an excellent piece of software, and it is the reason this one
+looks the way it does.
+
+What we learned from it, concretely:
+
+| | |
+|---|---|
+| a **factory function**, not a framework | `createChart(el, options)` |
+| **one chart, one series** | no series objects to juggle |
+| the **`setData` / `update` split** | a bulk load and a live tick are different operations |
+| **one small artifact, many charts per page** | the whole packaging model |
+| option names that read the same way | `crosshair`, `priceScale`, `timeScale`, `autoSize` |
+
+Our [migration guide](docs/migrating-from-lightweight-charts.md) is short
+precisely because of that lineage. Thank you to the TradingView team and to
+every Lightweight Charts contributor for setting the bar.
+
+**And if their library is the better fit for your project, use it.** It is
+smaller, it is Apache-2.0, its source is open, and it supports several series on
+one chart — none of which is true here. That comparison is
+[in this README](#is-this-the-right-choice), written straight.
+
+### What we did not take
+
+The inspiration is the **API surface and the packaging**. The engine underneath
+is our own: an independent implementation written in C++, compiled to
+WebAssembly, rendering through WebGL2 — a different approach to a shared
+problem, not a reimplementation of theirs.
+
+No TradingView source code, assets, fonts or trade marks are used, copied,
+decompiled or redistributed by this project, and no part of it is derived from
+TradingView software. Their work is theirs. We admire it; we did not take it.
 
 > TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc.
 > **This project is not affiliated with, endorsed by, sponsored by, or connected
-> to TradingView, Inc. in any way.** References to Lightweight Charts throughout
-> this documentation are nominative, comparative and descriptive only — made so
-> developers can evaluate the two and migrate between them.
+> to TradingView, Inc.** References to Lightweight Charts in this documentation
+> are nominative and descriptive only — so that developers can compare the two
+> and move between them.
 
 ## Support
 

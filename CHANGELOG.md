@@ -10,6 +10,19 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.3
+
+### Changed
+
+- The credit to **TradingView's Lightweight Charts** is now written as a proper
+  acknowledgement rather than a disclaimer: what that library got right, the
+  five specific things this package's API took from it, thanks to its team and
+  contributors, and a straight recommendation to use it instead where it is the
+  better fit. The trade mark and non-affiliation notices are unchanged in
+  substance and still present.
+
+---
+
 ## 1.0.2
 
 ### Added
