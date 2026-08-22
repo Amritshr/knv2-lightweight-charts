@@ -6,10 +6,12 @@ From nothing to a working chart. Five minutes, no build step.
 
 ## 1. Get the files
 
-**Download** the [latest release](https://github.com/Amritshr/knv2-lightweight-charts/releases) and unzip it, or:
-
 ```bash
-npm install knv2-lightweight-charts
+# Download the latest release and copy dist/ into your project:
+#   https://github.com/Amritshr/knv2-lightweight-charts/releases
+#
+# Or clone it:
+git clone https://github.com/Amritshr/knv2-lightweight-charts.git
 ```
 
 Either way you need one directory — `dist/` — containing three files:

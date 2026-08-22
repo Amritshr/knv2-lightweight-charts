@@ -10,6 +10,37 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.4
+
+### Added
+
+- **A landing page** (`index.html`) with a live, interactive 20,000-bar chart,
+  ready to serve from GitHub Pages. Every internal link and asset path on it is
+  relative, so the same files work from a project subpath *and* from a custom
+  domain with no edits.
+- `.nojekyll`, so Pages serves the site verbatim.
+
+### Fixed
+
+- **The install instructions promised an npm package that does not exist yet.**
+  `npm install` was the first command in the README and it failed with a 404.
+  Every install instruction now shows the download/clone path that works today;
+  a single `NPM_PUBLISHED` flag in the build flips them all back on publish.
+
+### Changed
+
+- **The closed-source status is now stated explicitly rather than implied.** The
+  comparison row read `source code | open | not published`, which could be
+  misread at a glance as describing this package. Every comparison now says
+  **closed — compiled WebAssembly only, never the C++**, and the README, the
+  landing page and the migration guide each say plainly that what ships is the
+  compiled binary and that the engine source is not distributed.
+- The demos now carry recognisable symbols — AAPL 15m on the landing page, and
+  AAPL 1D, TSLA 1D and BTCUSDT 1m in the examples — each labelled as simulated,
+  because the series is generated in the page and is not a live quote.
+
+---
+
 ## 1.0.3
 
 ### Changed

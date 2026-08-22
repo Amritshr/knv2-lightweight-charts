@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!--
+  ⚠ EVERY INTERNAL LINK AND ASSET PATH ON THIS PAGE IS RELATIVE, DELIBERATELY.
+
+  GitHub Pages serves a project site from a SUBPATH (/knv2-lightweight-charts/),
+  and a custom domain serves the same files from the ROOT. An absolute path like
+  /dist/... works on exactly one of those and 404s on the other. Relative paths
+  work on both, so moving this site onto your own domain later is a DNS change
+  and a CNAME file — nothing in here has to be touched.
+
+  The same rule applies to the chart itself: the SDK resolves knv2lw.wasm from
+  its own import.meta.url, so it follows the page wherever it is served from.
+-->
+
+<title>KNv2 Lightweight Charting Engine — WebGL2 + WebAssembly charts for the web</title>
+<meta name="description" content="A free financial charting engine for the web: candlestick, OHLC, line, area and Heikin-Ashi charts rendered by a C++ engine compiled to WebAssembly, drawing through WebGL2. Nine drawing tools, live updates, 100k bars at frame rate. A lightweight-charts alternative.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="KNv2 Lightweight Charting Engine">
+<meta property="og:description" content="A C++ charting engine compiled to WebAssembly, drawing through WebGL2. 100,000 bars pan at frame rate with zero JavaScript on the frame. Free to use with attribution.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Amrit Shrestha">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0f16'/><text x='16' y='22' font-family='system-ui,sans-serif' font-size='15' font-weight='700' fill='%2334d399' text-anchor='middle'>K2</text></svg>">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #070a0e; --panel: #0d1219; --line: #1a2029;
+    --fg: #e8ecf1; --dim: #98a2b3; --accent: #34d399; --accent2: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent2); }
+
+  header { padding: 64px 0 8px; text-align: center; }
+  .logo {
+    display: inline-block; border: 1.5px solid var(--accent); color: var(--accent);
+    border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 17px;
+    letter-spacing: 1px; margin-bottom: 20px;
+  }
+  h1 { margin: 0 0 12px; font-size: clamp(28px, 5vw, 44px); line-height: 1.15; letter-spacing: -0.8px; }
+  .tag { margin: 0 auto 8px; max-width: 640px; font-size: 17px; color: var(--dim); }
+  .sub { margin: 0 auto 28px; max-width: 620px; font-size: 14px; color: #6b7684; }
+
+  .cta { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .btn {
+    display: inline-block; padding: 9px 18px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; text-decoration: none; border: 1px solid var(--line);
+    background: var(--panel); color: var(--fg);
+  }
+  .btn:hover { border-color: #2c3644; background: #121822; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #04150e; }
+  .btn.primary:hover { background: #4ade9f; }
+
+  .pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+  .pill {
+    font-size: 12px; color: var(--dim); border: 1px solid var(--line);
+    border-radius: 999px; padding: 3px 11px; background: var(--panel);
+  }
+  .pill b { color: var(--fg); font-weight: 600; }
+
+  .demo { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--panel); }
+  .demobar {
+    display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line);
+    flex-wrap: wrap; align-items: center;
+  }
+  .demobar button {
+    background: #121821; color: #cbd5e1; border: 1px solid #212b39; border-radius: 6px;
+    padding: 4px 11px; font-size: 12.5px; cursor: pointer; font-family: inherit;
+  }
+  .demobar button[aria-pressed="true"] { background: #1d4ed8; border-color: #2563eb; color: #fff; }
+  .demobar .hint { margin-left: auto; font-size: 12px; color: #6b7684; font-variant-numeric: tabular-nums; }
+  .demobar .sym {
+    font-weight: 700; font-size: 13px; letter-spacing: 0.3px; color: var(--fg);
+    padding-right: 4px; margin-right: 4px; border-right: 1px solid var(--line);
+  }
+  .demobar .sym em { font-style: normal; font-weight: 500; color: var(--dim); font-size: 12px; }
+  /* ⚠ A REAL HEIGHT — a chart in a zero-height box renders nothing, silently. */
+  #chart { height: 440px; }
+  #fallback { padding: 40px; text-align: center; color: var(--dim); display: none; }
+
+  section { padding: 56px 0 0; }
+  h2 { font-size: 24px; margin: 0 0 8px; letter-spacing: -0.4px; }
+  h2 + p.lede { margin: 0 0 24px; color: var(--dim); }
+
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); }
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 18px; background: var(--panel); }
+  .card h3 { margin: 0 0 6px; font-size: 15px; }
+  .card p { margin: 0; font-size: 13.5px; color: var(--dim); line-height: 1.6; }
+
+  pre {
+    background: #0a0e14; border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.6;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+  p code, li code, td code { background: #131a23; padding: 1px 5px; border-radius: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--dim); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .scroll { overflow-x: auto; }
+
+  ul.docs { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  ul.docs a { display: block; border: 1px solid var(--line); border-radius: 9px;
+              padding: 11px 14px; text-decoration: none; color: var(--fg); background: var(--panel); font-size: 14px; }
+  ul.docs a:hover { border-color: #2c3644; }
+  ul.docs span { display: block; font-size: 12.5px; color: var(--dim); margin-top: 1px; }
+
+  footer { margin-top: 72px; padding: 28px 0 56px; border-top: 1px solid var(--line);
+           font-size: 13px; color: var(--dim); }
+  footer p { margin: 0 0 10px; }
+  .fine { font-size: 12px; color: #5d6773; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="logo">K2</div>
+    <h1>KNv2 Lightweight Charting Engine</h1>
+    <p class="tag">
+      A financial charting engine written in C++, compiled to WebAssembly,
+      drawn with WebGL2. <b>No JavaScript runs on a frame.</b>
+    </p>
+    <p class="sub">
+      Free to use in commercial products — keep the attribution mark, and that is
+      the whole price.
+    </p>
+
+    <div class="cta">
+      <a class="btn primary" href="#demo">Try it below</a>
+      <a class="btn" href="https://github.com/Amritshr/knv2-lightweight-charts">GitHub</a>
+      <a class="btn" href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/getting-started.md">Get started</a>
+      <a class="btn" href="./examples/vanilla/">Full demo</a>
+    </div>
+
+    <div class="pills">
+      <span class="pill"><b>78 KB</b> engine, gzipped</span>
+      <span class="pill"><b>100 KB</b> total</span>
+      <span class="pill"><b>5</b> chart types</span>
+      <span class="pill"><b>9</b> drawing tools</span>
+      <span class="pill"><b>0</b> dependencies</span>
+      <span class="pill">WebGL2 · WebAssembly</span>
+    </div>
+  </header>
+
+  <section id="demo" style="padding-top:0">
+    <div class="demo">
+      <div class="demobar" id="bar">
+        <span class="sym">AAPL <em>· 15m</em></span>
+        <button data-type="candles" aria-pressed="true">candles</button>
+        <button data-type="bars">bars</button>
+        <button data-type="line">line</button>
+        <button data-type="area">area</button>
+        <button data-type="heikin">heikin</button>
+        <span class="hint" id="hint">20,000 bars · simulated · drag to pan, scroll to zoom</span>
+      </div>
+      <div id="chart"></div>
+      <div id="fallback"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why it is different</h2>
+    <p class="lede">Most web charts redraw from JavaScript. This one does not.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Nothing on the frame</h3>
+        <p>The projection, hit-testing, text layout, input handling and render
+           loop are all compiled C++ inside the engine. Panning uploads nothing
+           and allocates nothing.</p>
+      </div>
+      <div class="card">
+        <h3>Built for long series</h3>
+        <p>100,000 bars pan at frame rate. The chart above is holding 20,000 —
+           drag it around and watch your CPU stay idle.</p>
+      </div>
+      <div class="card">
+        <h3>Drawing tools included</h3>
+        <p>Trend line, ray, horizontal and vertical lines, extended, arrow, text
+           and callout — hit-tested, selectable, draggable, with undo/redo. Not
+           DOM overlays you have to build.</p>
+      </div>
+      <div class="card">
+        <h3>Any market, any feed</h3>
+        <p>It takes an array. Stocks, futures, forex, crypto, or a CSV — if you
+           can shape it into <code>{ time, open, high, low, close }</code>, it
+           charts. Nothing is fetched for you.</p>
+      </div>
+      <div class="card">
+        <h3>Live updates, in place</h3>
+        <p><code>update()</code> rewrites the forming bar without re-uploading
+           the series. Point a WebSocket at it and leave it running.</p>
+      </div>
+      <div class="card">
+        <h3>Verifiable</h3>
+        <p>Every shipped file has a published SHA-256, checked in the browser
+           before the engine may run. No telemetry, no call-home, no network
+           request but its own two files.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A complete chart, in six lines</h2>
+    <p class="lede">No build step, no bundler, no account, no API key.</p>
+<pre><code>import { createChart } from './dist/knv2-lightweight-charts.js';
+
+const chart = await createChart(document.getElementById('chart'), {
+  type: 'candles',
+  theme: 'dark',
+});
+
+chart.setData(bars);   // [{ time, open, high, low, close }]</code></pre>
+    <p style="color:var(--dim);font-size:14px">
+      Then <code>chart.update(bar)</code> on every tick.
+      React, Vue, Svelte, Next.js and plain HTML are all
+      <a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/frameworks.md">covered in the docs</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Is it the right choice?</h2>
+    <p class="lede">Written straight, because a bad fit helps nobody.</p>
+    <div class="scroll">
+      <table>
+        <tr><th></th><th>lightweight-charts</th><th>KNv2 Lightweight Charting Engine</th></tr>
+        <tr><td>renderer</td><td>Canvas2D, JavaScript</td><td>WebGL2, C++ → WebAssembly</td></tr>
+        <tr><td>payload</td><td>~45 KB gz</td><td>100 KB gz</td></tr>
+        <tr><td>JS cost per frame</td><td>grows with visible bars</td><td><b>none</b></td></tr>
+        <tr><td>100k bars</td><td>struggles</td><td>designed for it</td></tr>
+        <tr><td>drawing tools</td><td>none — you build overlays</td><td>nine, hit-tested, undo/redo</td></tr>
+        <tr><td>indicators</td><td>you compute and add series</td><td><b>not included</b></td></tr>
+        <tr><td>licence</td><td>Apache 2.0</td><td>free, attribution required</td></tr>
+        <tr><td>source code</td><td>open (Apache 2.0)</td><td><b>closed</b> — compiled WebAssembly only, never the C++</td></tr>
+      </table>
+    </div>
+    <p style="color:var(--dim);font-size:14px;margin-top:16px">
+      <b>Use lightweight-charts instead</b> if you need those 45 KB, an
+      OSI-approved licence, readable source, or several series on one chart. It
+      is an excellent library and this one is
+      <a href="https://github.com/Amritshr/knv2-lightweight-charts#credits">openly modelled on it</a>.
+    </p>
+    <p style="color:var(--dim);font-size:14px;margin-top:12px">
+      <b>What you get is the compiled engine, not the code.</b> The download is a
+      WebAssembly binary, its loader, a minified SDK and TypeScript definitions.
+      The C++ source of the engine is <b>not distributed</b> and is not part of
+      this package — see <a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/integrity.md">integrity
+      &amp; security</a> for how to verify the binary you were given.
+    </p>
+  </section>
+
+  <section>
+    <h2>Documentation</h2>
+    <p class="lede">Ten guides, from first chart to production hardening.</p>
+    <ul class="docs">
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/getting-started.md">Getting started<span>Install, serve, first chart</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/api.md">API reference<span>Every option, method and event</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/data-sources.md">Data sources<span>REST, WebSocket, CSV, vendors</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/frameworks.md">Frameworks<span>React, Next.js, Vue, Svelte</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/theming.md">Theming<span>Palettes, gradients, candle styling</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/drawings.md">Drawing tools<span>Arming, persistence, programmatic</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/migrating-from-lightweight-charts.md">Migrating<span>Call-by-call mapping</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/attribution.md">Attribution<span>The one licence condition</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/integrity.md">Integrity &amp; security<span>Checksums, SRI, CSP</span></a></li>
+      <li><a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/docs/troubleshooting.md">Troubleshooting<span>Blank canvas, leaks, heap limits</span></a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Live examples</h2>
+    <p class="lede">Runnable, no build step, no dependencies.</p>
+    <ul class="docs">
+      <li><a href="./examples/vanilla/">Vanilla<span>Chart types, themes, drawing tools</span></a></li>
+      <li><a href="./examples/react/">React<span>Component, legend, tool dock</span></a></li>
+      <li><a href="./examples/live-websocket/">Live feed<span>A tick stream driving update()</span></a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Licence</h2>
+    <p style="color:var(--dim);font-size:14px;max-width:70ch">
+      Free for anything — commercial products, closed-source products, unlimited
+      developers, domains, charts and users. The one condition is that the
+      attribution mark stays visible on every chart: the <b>K2</b> logo, the text
+      <b>Charts by KNv2</b>, and the credit to <b>Amrit Shrestha</b>. You may move
+      it to any corner and put your own branding anywhere else. You may not modify
+      the compiled engine, reverse engineer or decompile it, or republish it
+      standalone. <b>This is closed-source software:</b> the WebAssembly binary
+      is licensed to you, the C++ behind it is not published.
+      <a href="https://github.com/Amritshr/knv2-lightweight-charts/blob/main/LICENSE.md">Full terms</a>.
+    </p>
+  </section>
+
+  <footer>
+    <p>
+      <b>Inspired by TradingView's Lightweight Charts.</b> That library showed
+      how small and focused a charting API could be, and this one follows its
+      shape on purpose. Thank you to its team and contributors —
+      <a href="https://github.com/Amritshr/knv2-lightweight-charts#credits">the full credit is in the README</a>.
+    </p>
+    <p class="fine">
+      The inspiration is the API surface and the packaging, not the code. The
+      engine here is an independent C++ implementation; no TradingView source,
+      assets, fonts or trade marks are used, copied, decompiled or redistributed.
+      TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc.
+      This project is not affiliated with, endorsed by, sponsored by or connected
+      to TradingView, Inc.
+    </p>
+    <p class="fine">© 2026 Amrit Shrestha. All rights reserved. · v1.0.4</p>
+  </footer>
+
+</div>
+
+<script type="module">
+// ⚠ RELATIVE, so this page works from a project subpath AND from a custom
+//   domain root. See the note at the top of the file.
+import { createChart } from './dist/knv2-lightweight-charts.js';
+
+const host = document.getElementById('chart');
+const fallback = document.getElementById('fallback');
+
+function fail(msg) {
+  host.style.display = 'none';
+  fallback.style.display = 'block';
+  fallback.textContent = msg;
+}
+
+// ⚠ SIMULATED DATA, LABELLED AS SUCH IN THE UI. The series is generated here so
+//   the page works offline and under a strict `connect-src 'self'` policy — the
+//   package fetches nothing on its own. The AAPL label is a realistic stand-in
+//   for what a host would show, not a live quote, and the toolbar says so.
+function makeBars(n) {
+  // ⚠ MEAN-REVERTING, NOT A PLAIN RANDOM WALK. A naive cumulative walk over
+  //   20,000 bars wanders hundreds of dollars away from where it started and
+  //   renders as one relentless diagonal — which looks nothing like a real
+  //   instrument and undersells the engine. A pull toward a base level plus
+  //   occasional regime shifts and clustered volatility gives the ranges,
+  //   trends and pullbacks a reader expects to see.
+  const BASE = 205;
+  const out = [];
+  let price = BASE, vol = 0.45, trend = 0;
+  let t = Math.floor(Date.now() / 1000) - n * 900;
+
+  for (let i = 0; i < n; i += 1) {
+    if (i % 780 === 0) trend = (Math.random() - 0.5) * 0.055;   // a new regime
+    vol = Math.min(1.3, Math.max(0.18, vol * (0.972 + Math.random() * 0.058)));
+    const revert = (BASE - price) * 0.0009;                     // the leash
+
+    const open = price;
+    const close = open + trend + revert + (Math.random() - 0.5) * vol * 2;
+    const wick = vol * (0.3 + Math.random() * 0.7);
+    out.push({
+      time: t, open, close,
+      high: Math.max(open, close) + Math.random() * wick,
+      low: Math.min(open, close) - Math.random() * wick,
+      volume: Math.round(4e5 + Math.random() * 6e6 * (vol / 0.6)),
+    });
+    price = close;
+    t += 900;
+  }
+  return out;
+}
+
+// ⚠ MOUNTING THE CHART MOVES THE PAGE, AND A LANDING PAGE MUST NOT DO THAT.
+//   Several things conspire here — the browser restoring a previous scroll
+//   position, scroll anchoring reacting to a 440px canvas appearing, and the
+//   engine focusing its own canvas on attach. Chasing which one it is on a
+//   given browser is a losing game, so this pins the top until the visitor
+//   themselves scrolls, which is correct whatever the cause.
+//
+//   A one-shot `scrollTo(0, 0)` after `await` is NOT enough: the scroll happens
+//   again on later frames as the canvas sizes itself, which is exactly how an
+//   earlier version of this page ended up 1,900px down.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+let userMoved = false;
+const markMoved = () => { userMoved = true; };
+for (const ev of ['wheel', 'touchmove', 'keydown', 'click']) {
+  addEventListener(ev, markMoved, { passive: true, once: true });
+}
+
+function pinTop() {
+  // An explicit #anchor is the visitor's intent — never fight it.
+  if (!userMoved && !location.hash && window.scrollY !== 0) window.scrollTo(0, 0);
+}
+pinTop();
+
+let chart = null;
+try {
+  chart = await createChart(host, {
+    type: 'candles',
+    theme: { background: '#0d1219', backgroundBase: '#0d1219',
+             grid: 'rgba(255,255,255,0.05)', axis: 'rgba(255,255,255,0.22)',
+             text: 'rgba(232,236,241,0.66)', up: '#34d399', down: '#f87171' },
+    crosshair: { mode: 'magnet' },
+    priceScale: { marginTop: 0.12, marginBottom: 0.12, lastPriceLabel: true },
+    candles: { borderVisible: false },
+  });
+} catch (e) {
+  // An IntegrityError here means dist/ was not deployed alongside this page.
+  fail(e.name + ': ' + e.message.split('\n')[0]);
+}
+
+// Hold the top across the frames in which the canvas settles, then stop
+// interfering entirely.
+pinTop();
+const pinner = setInterval(pinTop, 100);
+setTimeout(() => clearInterval(pinner), 2500);
+
+if (chart) {
+  const bars = makeBars(20000);
+  chart.setData(bars);
+
+  // ⚠ AFTER A FRAME, NOT IMMEDIATELY. `setData` autoscales and fits, and the
+  //   ResizeObserver's first real measurement fits again right behind it — a
+  //   range set synchronously here is silently overwritten by that second fit,
+  //   which is why the whole 20,000-bar series was on screen at once.
+  requestAnimationFrame(() => chart.setVisibleRange(bars.length - 320, bars.length));
+
+  document.getElementById('bar').addEventListener('click', (e) => {
+    const t = e.target.dataset.type;
+    if (!t) return;
+    chart.setChartType(t);
+    [...e.currentTarget.querySelectorAll('button')].forEach(
+      (b) => b.setAttribute('aria-pressed', String(b.dataset.type === t)),
+    );
+  });
+
+  const hint = document.getElementById('hint');
+  chart.subscribeCrosshairMove((h) => {
+    hint.textContent = h
+      ? 'O ' + h.open.toFixed(2) + '  H ' + h.high.toFixed(2) +
+        '  L ' + h.low.toFixed(2) + '  C ' + h.close.toFixed(2)
+      : '20,000 bars · simulated · drag to pan, scroll to zoom';
+  });
+} else if (!fallback.textContent) {
+  fail('This browser does not support WebGL2. Chrome/Edge 56+, Firefox 51+, Safari 15+.');
+}
+</script>
+</body>
+</html>

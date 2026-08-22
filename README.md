@@ -72,10 +72,12 @@ choice?" below.
 
 ## Install
 
-**Download** the [latest release](https://github.com/Amritshr/knv2-lightweight-charts/releases), or:
-
 ```bash
-npm install knv2-lightweight-charts
+# Download the latest release and copy dist/ into your project:
+#   https://github.com/Amritshr/knv2-lightweight-charts/releases
+#
+# Or clone it:
+git clone https://github.com/Amritshr/knv2-lightweight-charts.git
 ```
 
 Then copy `dist/` somewhere your web server serves as static files. That is the
@@ -129,7 +131,7 @@ The engine is fetched once and cached. It is shared by every chart on the page.
 | drawing tools | none — you build overlays | nine tools, hit-tested, undo/redo |
 | indicators | you compute and add series | **not included** |
 | licence | Apache 2.0 | free with required attribution ([terms](LICENSE.md)) |
-| source code | open | **not published** |
+| source code | open (Apache 2.0) | **closed** — compiled WebAssembly only, never the C++ |
 
 **Choose this** if you want the drawing tools, large-series performance, or a
 chart that stays smooth while your app does other work on the main thread.
@@ -137,6 +139,12 @@ chart that stays smooth while your app does other work on the main thread.
 **Choose `lightweight-charts`** if you need those 45 KB, if you need an
 OSI-approved open-source licence, if you need to read or fork the source, or if
 you need indicator series and histograms on the same chart.
+
+⚠ **This package is closed source.** What ships is the compiled WebAssembly
+engine, its loader, a minified SDK and TypeScript definitions. The C++ source of
+the engine is not distributed, and the licence does not permit reverse
+engineering or decompiling it. If reading the code matters to you, that is a
+real reason to choose differently, and we would rather you knew now.
 
 Both are good libraries. Pick on the requirement, not the pitch.
 
@@ -162,10 +170,6 @@ Worked adapters for REST endpoints, WebSocket feeds, CSV, and several common
 market-data vendors: **[docs/data-sources.md](docs/data-sources.md)**.
 
 ## Frameworks
-
-```bash
-npm install knv2-lightweight-charts
-```
 
 ```jsx
 import KNv2Chart from 'knv2-lightweight-charts/react';
@@ -198,7 +202,8 @@ mark visible on every chart** — all three parts of it: the `K2` logo,
 the text "Charts by KNv2", and the credit to **Amrit Shrestha**. You may move it
 to any corner you like, and you may put your own branding anywhere else. You must not modify
 the compiled engine, reverse engineer it, or republish it as a standalone
-package. No warranty; this software draws charts and does not give financial
+package. **It is closed source** — you receive the compiled WebAssembly binary,
+not the C++. No warranty; this software draws charts and does not give financial
 advice.
 
 The full terms are in **[LICENSE.md](LICENSE.md)** and they are short. §3

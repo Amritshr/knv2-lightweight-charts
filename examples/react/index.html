@@ -26,9 +26,9 @@
 
 <!--
   ⚠ REACT IS PULLED FROM A CDN HERE ONLY SO THIS EXAMPLE RUNS WITH NO BUILD
-    STEP. In a real app you `npm install knv2-lightweight-charts` and import
-    `knv2-lightweight-charts/react`; React stays a peer dependency and is never bundled
-    into the package.
+    STEP. In a real app you serve `dist/` yourself and import
+    `knv2-lightweight-charts.react.js` from there; React stays a peer dependency and is
+    never bundled into the package.
 -->
 <script type="importmap">
 {
@@ -86,7 +86,8 @@ function App() {
   return h('div', null,
     h('header', null,
       h('h1', null, 'KNv2 Lightweight Charting Engine — React'),
-      h('p', { className: 'sub' }, 'The supplied component handles the async mount, teardown and Strict Mode.'),
+      h('p', { className: 'sub' },
+        'Showing TSLA · 1D (simulated). The supplied component handles the async mount, teardown and Strict Mode.'),
     ),
 
     h('div', { className: 'bar' },

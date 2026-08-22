@@ -28,7 +28,7 @@ difference: **there are no series objects.** One chart draws one series, so
 | drawing tools | none — you build overlays | nine, hit-tested, undo/redo |
 | indicators / extra series | yes | **no** |
 | licence | Apache 2.0 | free with required attribution |
-| source | open | not published |
+| source | open (Apache 2.0) | **closed** — compiled WebAssembly only |
 
 **Do not migrate** if you need those 45 KB, an OSI-approved licence, the source,
 or indicator series on the same chart. **Do migrate** if you want the drawing
@@ -171,7 +171,8 @@ chart.remove();
 
 - roughly 100 KB against lightweight-charts’ ~45 KB
 - indicator series and histograms on the same chart
-- the Apache 2.0 licence and the source code
+- the Apache 2.0 licence, and any access to the source: this package ships the
+  compiled WebAssembly engine, never the C++
 
 ---
 

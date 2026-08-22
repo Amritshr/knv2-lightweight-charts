@@ -1,6 +1,6 @@
 {
   "name": "knv2-lightweight-charts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "KNv2 Lightweight Charting Engine — a WebGL2 + WebAssembly financial charting engine. A drop-in alternative to lightweight-charts, free to use with attribution.",
   "type": "module",
   "main": "./dist/knv2-lightweight-charts.js",

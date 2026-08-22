@@ -29,9 +29,7 @@ No build step, no bundler, no npm.
 
 ## React
 
-```bash
-npm install knv2-lightweight-charts
-```
+Import the SDK from wherever you serve `dist/` — download `dist/` from [the latest release](https://github.com/Amritshr/knv2-lightweight-charts/releases) — an npm package is planned.
 
 ```jsx
 import KNv2Chart from 'knv2-lightweight-charts/react';
