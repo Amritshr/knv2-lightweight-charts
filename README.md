@@ -8,9 +8,11 @@
 
 Free to use in commercial products. Keep the attribution mark, and that is the whole price.
 
-*API modelled on TradingView's Lightweight Charts. Engine written in C++.*
+*Inspired by [TradingView](https://www.tradingview.com/)'s [Lightweight Charts](https://github.com/tradingview/lightweight-charts). Engine written from scratch in C++.*
 
 [Getting started](docs/getting-started.md) · [API](docs/api.md) · [Live data](docs/data-sources.md) · [Migrating from lightweight-charts](docs/migrating-from-lightweight-charts.md) · [Licence](LICENSE.md)
+
+<sub>TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc. Not affiliated with or endorsed by TradingView, Inc. The engine code is our own; no TradingView code is used.</sub>
 
 </div>
 
@@ -27,8 +29,7 @@ a 100,000-bar series uploads nothing and allocates nothing.
 
 The API is modelled on TradingView's `lightweight-charts`: one small artifact, a
 small API, many charts on a page. If you have used that library you already know
-this one — see the [migration guide](docs/migrating-from-lightweight-charts.md)
-and the [credits](#credits).
+this one — see the [migration guide](docs/migrating-from-lightweight-charts.md).
 
 What is different is underneath: an independent C++ engine compiled to
 WebAssembly and drawing through WebGL2, rather than Canvas2D driven from
@@ -254,26 +255,6 @@ See [docs/integrity.md](docs/integrity.md).
 | [Integrity & security](docs/integrity.md) | checksums, SRI, CSP, serving the binary |
 | [Troubleshooting](docs/troubleshooting.md) | blank canvas, blurry chart, leaks, heap limits |
 | [Migrating](docs/migrating-from-lightweight-charts.md) | call-by-call mapping |
-
-## Credits
-
-The API here is modelled on **[TradingView](https://www.tradingview.com/)'s
-[Lightweight Charts](https://github.com/tradingview/lightweight-charts)**. We
-used it as the reference for what the public interface should look like: a
-factory function rather than a framework, one series per chart, the
-`setData` / `update` split, and much of the option naming. Credit to that
-project and the people who build it.
-
-If it suits your project better, use it — it is smaller, Apache-2.0, open
-source, and it supports several series on one chart.
-
-**The code here is ours.** The engine is an independent C++ implementation
-compiled to WebAssembly. No TradingView source code, assets, fonts or trade
-marks are used, copied, decompiled or redistributed, and no part of this project
-is derived from TradingView software.
-
-> TradingView™ and Lightweight Charts™ are trade marks of TradingView, Inc. This
-> project is not affiliated with, endorsed by or sponsored by TradingView, Inc.
 
 ## Support
 

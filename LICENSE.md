@@ -2,7 +2,7 @@
 
 *Package: `knv2-lightweight-charts`*
 
-**Version 1.0.5 · Copyright © 2026 Amrit Shrestha. All rights reserved.**
+**Version 1.0.6 · Copyright © 2026 Amrit Shrestha. All rights reserved.**
 
 This is a **proprietary licence**, not an open-source one. The software is free
 to use, including in commercial and closed-source products, on the conditions

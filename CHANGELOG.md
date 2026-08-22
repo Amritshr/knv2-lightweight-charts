@@ -10,6 +10,18 @@ release**; mixing files across versions fails with an `IntegrityError`.
 
 ---
 
+## 1.0.6
+
+### Changed
+
+- The TradingView credit is now one line under the header, plus a trade mark
+  note under the nav links, and nothing more. The standalone Credits section
+  said the same thing at ten times the length and has been removed. Dropped the
+  word "API" from the credit line — this is a charting engine, not an API.
+  `NOTICE` still carries the full legal statement.
+
+---
+
 ## 1.0.5
 
 ### Changed
