@@ -1,0 +1,57 @@
+KNv2 Lightweight Charting Engine (knv2-lightweight-charts)
+Copyright (c) 2026 Amrit Shrestha. All rights reserved.
+
+This product includes proprietary software developed by Amrit Shrestha.
+Licensed under the terms in LICENSE.md. Use is free of charge and requires
+that the "Charts by KNv2" attribution mark remain visible on every chart.
+
+--------------------------------------------------------------------------
+ATTRIBUTION
+--------------------------------------------------------------------------
+
+The Software renders its own attribution mark inside every chart container.
+Nothing further is required of you.
+
+If you additionally credit this project in an "about", "licences", or
+"open source" screen -- which is appreciated but not required -- the
+following text is suitable:
+
+    Charts rendered by Charts by KNv2
+    https://github.com/Amritshr/knv2-lightweight-charts
+    (c) 2026 Amrit Shrestha. Used under licence.
+
+--------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS
+--------------------------------------------------------------------------
+
+The WebAssembly engine (knv2lw.wasm) and its loader (knv2lw.js) are compiled
+with Emscripten. The generated loader incorporates portions of the Emscripten
+runtime support library.
+
+    Emscripten
+    Copyright (c) 2010-2014 Emscripten authors, see AUTHORS file
+    Licensed under the MIT License and the University of Illinois/NCSA
+    Open Source License. https://github.com/emscripten-core/emscripten
+
+The compiled engine also incorporates portions of the LLVM Project runtime
+libraries (compiler-rt, libc++, libc++abi), distributed with Emscripten.
+
+    LLVM Project
+    Licensed under the Apache License v2.0 with LLVM Exceptions.
+    https://llvm.org/LICENSE.txt
+
+No other third-party code is included in dist/. The SDK bundles have no
+runtime dependencies. React is a peer dependency of the optional React entry
+point and is never bundled.
+
+--------------------------------------------------------------------------
+TRADE MARKS
+--------------------------------------------------------------------------
+
+TradingView and Lightweight Charts are trade marks of TradingView, Inc.
+This project is not affiliated with, endorsed by, or sponsored by
+TradingView, Inc. References to "lightweight-charts" in this project's
+documentation are comparative and descriptive only, made to help developers
+evaluate and migrate between the two libraries.
+
+All other trade marks are the property of their respective owners.

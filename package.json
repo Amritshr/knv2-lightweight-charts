@@ -1,0 +1,70 @@
+{
+  "name": "knv2-lightweight-charts",
+  "version": "1.0.0",
+  "description": "KNv2 Lightweight Charting Engine — a WebGL2 + WebAssembly financial charting engine. A drop-in alternative to lightweight-charts, free to use with attribution.",
+  "type": "module",
+  "main": "./dist/knv2-lightweight-charts.js",
+  "module": "./dist/knv2-lightweight-charts.js",
+  "types": "./dist/knv2-lightweight-charts.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/knv2-lightweight-charts.d.ts",
+      "import": "./dist/knv2-lightweight-charts.js"
+    },
+    "./react": {
+      "types": "./dist/knv2-lightweight-charts.react.d.ts",
+      "import": "./dist/knv2-lightweight-charts.react.js"
+    },
+    "./dist/knv2lw.wasm": "./dist/knv2lw.wasm",
+    "./dist/knv2lw.js": "./dist/knv2lw.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.md",
+    "NOTICE",
+    "checksums.sha256"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "verify": "shasum -a 256 -c checksums.sha256",
+    "serve": "node examples/serve.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "charts",
+    "charting",
+    "candlestick",
+    "financial",
+    "trading",
+    "stocks",
+    "webgl",
+    "webassembly",
+    "wasm",
+    "ohlc",
+    "technical-analysis",
+    "lightweight-charts",
+    "tradingview-alternative"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Amritshr/knv2-lightweight-charts.git"
+  },
+  "homepage": "https://github.com/Amritshr/knv2-lightweight-charts#readme",
+  "engines": {
+    "node": ">=18"
+  }
+}

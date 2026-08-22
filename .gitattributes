@@ -1,0 +1,24 @@
+# ⚠ ORDER MATTERS IN THIS FILE: THE LAST MATCHING PATTERN WINS.
+#
+# The catch-all therefore comes FIRST and the dist/ exemptions come after it. A
+# tidier-looking file with `* text=auto` at the bottom silently re-enables line
+# ending translation for dist/ — the exact bug this file exists to prevent, and
+# one that was written the wrong way round once already.
+
+* text=auto
+
+# ⚠ EVERYTHING IN dist/ IS BYTE-EXACT AND MUST NEVER BE TRANSLATED.
+#
+# The SDK verifies knv2lw.wasm and knv2lw.js against SHA-256 digests compiled
+# into the bundle before it will let the engine instantiate, and
+# checksums.sha256 publishes the digest of every shipped file.
+#
+# Git's autocrlf would rewrite the line endings of the text-looking files in
+# dist/ on checkout — which changes their bytes, which changes their digests.
+# The result for anyone cloning on Windows would be an IntegrityError on every
+# chart, or a `shasum -c` that fails on a pristine clone, with nothing anywhere
+# to explain why. Marking them binary is what makes the digests mean anything.
+/dist/** -text -diff
+
+# The digest list itself must stay LF, or `shasum -c` chokes on the line endings.
+/checksums.sha256 text eol=lf

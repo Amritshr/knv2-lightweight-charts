@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KNv2 Lightweight Charting Engine — vanilla</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #070a0e; color: #e5e7eb;
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header { padding: 18px 20px 0; }
+  h1 { margin: 0 0 4px; font-size: 17px; font-weight: 600; letter-spacing: -0.2px; }
+  p.sub { margin: 0; color: #8b94a3; font-size: 12.5px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 20px; align-items: center; }
+  .bar .sep { width: 1px; height: 20px; background: #1f2937; margin: 0 4px; }
+  button {
+    background: #121821; color: #cbd5e1; border: 1px solid #212b39;
+    border-radius: 6px; padding: 5px 11px; font-size: 12.5px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #17202b; }
+  button[aria-pressed="true"] { background: #1d4ed8; border-color: #2563eb; color: #fff; }
+  /* ⚠ A REAL HEIGHT. A chart in a zero-height container renders nothing and
+     reports no error — it is the single most common mistake. */
+  #chart { height: 460px; margin: 0 20px 8px; border: 1px solid #161c26; border-radius: 10px; }
+  #legend {
+    padding: 0 20px 20px; color: #94a3b8; font-size: 12.5px;
+    font-variant-numeric: tabular-nums; min-height: 20px;
+  }
+  #legend b { color: #e5e7eb; font-weight: 600; }
+  .err { margin: 20px; padding: 14px; border: 1px solid #7f1d1d; border-radius: 8px; background: #1a0f0f; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>KNv2 Lightweight Charting Engine</h1>
+  <p class="sub">One HTML file. No build step, no bundler, no dependencies.</p>
+</header>
+
+<div class="bar">
+  <span id="types"></span>
+  <span class="sep"></span>
+  <span id="tools"></span>
+  <span class="sep"></span>
+  <button id="theme">Light</button>
+  <button id="fit">Fit</button>
+  <button id="undo">Undo</button>
+  <button id="clear">Clear drawings</button>
+</div>
+
+<div id="chart"></div>
+<div id="legend"></div>
+
+<script type="module">
+import { createChart, version } from '../../dist/knv2-lightweight-charts.js';
+
+const el = document.getElementById('chart');
+
+// ── Synthetic data. Swap this for your own feed — see docs/data-sources.md ───
+function makeBars(n) {
+  const out = [];
+  let price = 180;
+  let t = Math.floor(Date.now() / 1000) - n * 86400;
+  for (let i = 0; i < n; i += 1) {
+    const drift = (Math.sin(i / 40) + Math.sin(i / 13) * 0.4) * 0.6;
+    const open = price;
+    const close = open + drift + (Math.random() - 0.5) * 2.2;
+    const high = Math.max(open, close) + Math.random() * 1.4;
+    const low = Math.min(open, close) - Math.random() * 1.4;
+    out.push({ time: t, open, high, low, close, volume: Math.round(1e5 + Math.random() * 9e5) });
+    price = close;
+    t += 86400;
+  }
+  return out;
+}
+const bars = makeBars(1500);
+
+// ── Mount ────────────────────────────────────────────────────────────────────
+let dark = true;
+let chart;
+
+try {
+  chart = await createChart(el, {
+    type: 'candles',
+    theme: 'dark',
+    crosshair: { mode: 'magnet' },
+    priceScale: { marginTop: 0.1, marginBottom: 0.1, lastPriceLabel: true, highLowLabels: true },
+  });
+} catch (e) {
+  // An IntegrityError means dist/ is missing, mismatched or modified.
+  el.outerHTML = '<div class="err"><b>' + e.name + '</b><br>' + e.message.replace(/\n/g, '<br>') + '</div>';
+  throw e;
+}
+
+if (!chart) {
+  // ⚠ null, not an exception: this browser has no WebGL2.
+  el.innerHTML = '<div class="err">This browser does not support WebGL2. Chrome/Edge 56+, Firefox 51+, Safari 15+.</div>';
+} else {
+  const n = chart.setData(bars);
+  if (n === 0) console.warn('setData refused — series too large for the shared heap');
+  console.log('knv2-lightweight-charts', version, chart.metrics());
+
+  // ── Chart types ────────────────────────────────────────────────────────────
+  const TYPES = ['candles', 'bars', 'line', 'area', 'heikin'];
+  document.getElementById('types').innerHTML =
+    TYPES.map((t) => `<button data-type="${t}" aria-pressed="${t === 'candles'}">${t}</button>`).join('');
+
+  document.getElementById('types').onclick = (e) => {
+    const t = e.target.dataset.type;
+    if (!t) return;
+    chart.setChartType(t);
+    [...e.currentTarget.children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.type === t));
+  };
+
+  // ── Drawing tools ──────────────────────────────────────────────────────────
+  const TOOLS = ['none', 'trendline', 'ray', 'hline', 'arrow', 'text'];
+  document.getElementById('tools').innerHTML =
+    TOOLS.map((t) => `<button data-tool="${t}" aria-pressed="${t === 'none'}">${t}</button>`).join('');
+
+  document.getElementById('tools').onclick = (e) => {
+    const t = e.target.dataset.tool;
+    if (!t) return;
+    chart.setTool(t);
+    [...e.currentTarget.children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.tool === t));
+  };
+
+  // ⚠ A TEXT OBJECT IS PLACED WITH A PLACEHOLDER — C++ cannot open UI, so the
+  //   host prompts and fills it in, or removes it if the user cancels.
+  chart.subscribeDrawingChange((id, ev) => {
+    if (ev !== 'created') return;
+    const d = chart.drawing(id);
+    if (d?.tool !== 'text' && d?.tool !== 'callout') return;
+    const text = window.prompt('Label');
+    if (text) chart.setDrawingText(id, text);
+    else chart.removeDrawing(id);
+  });
+
+  // ── Legend ─────────────────────────────────────────────────────────────────
+  const legend = document.getElementById('legend');
+  const fmt = (v) => v.toFixed(2);
+  chart.subscribeCrosshairMove((h) => {
+    // ⚠ Fires on a change of hovered BAR, not per mouse move. `null` on leave.
+    if (!h) { legend.textContent = ''; return; }
+    const up = h.close >= h.open;
+    legend.innerHTML =
+      new Date(h.time).toLocaleDateString() +
+      `  O <b>${fmt(h.open)}</b>  H <b>${fmt(h.high)}</b>  L <b>${fmt(h.low)}</b>  ` +
+      `C <b style="color:${up ? '#22c55e' : '#ef4444'}">${fmt(h.close)}</b>  ` +
+      `V <b>${h.volume.toLocaleString()}</b>`;
+  });
+
+  // ── Buttons ────────────────────────────────────────────────────────────────
+  document.getElementById('fit').onclick = () => chart.fitContent();
+  document.getElementById('undo').onclick = () => chart.undo();
+  document.getElementById('clear').onclick = () => chart.clearDrawings();
+  document.getElementById('theme').onclick = (e) => {
+    dark = !dark;
+    chart.applyOptions({ theme: dark ? 'dark' : 'light' });
+    document.body.style.background = dark ? '#070a0e' : '#f8fafc';
+    document.body.style.color = dark ? '#e5e7eb' : '#0f172a';
+    e.target.textContent = dark ? 'Light' : 'Dark';
+  };
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') chart.setTool('none');
+    if (e.key === 'Delete' || e.key === 'Backspace') chart.deleteSelected();
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      e.shiftKey ? chart.redo() : chart.undo();
+    }
+  });
+
+  // ⚠ Always release the chart. It holds a WebGL2 context and browsers evict
+  //   the oldest past ~16 — a leak makes a DIFFERENT chart go blank.
+  window.addEventListener('pagehide', () => chart.remove());
+}
+</script>
+</body>
+</html>

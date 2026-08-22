@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KNv2 Lightweight Charting Engine — live feed</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #070a0e; color: #e5e7eb;
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header { padding: 18px 20px 10px; }
+  h1 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+  p.sub { margin: 0; color: #8b94a3; font-size: 12.5px; }
+  #chart { height: 460px; margin: 10px 20px; border: 1px solid #161c26; border-radius: 10px; }
+  #status { padding: 0 20px 20px; font-size: 12.5px; color: #94a3b8; font-variant-numeric: tabular-nums; }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; margin-right: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Live feed</h1>
+  <p class="sub">
+    A simulated tick stream driving <code>update()</code>. The pattern is
+    identical for a real WebSocket — see <code>docs/data-sources.md</code>.
+  </p>
+</header>
+
+<div id="chart"></div>
+<div id="status"><span class="dot"></span><span id="msg">connecting…</span></div>
+
+<script type="module">
+import { createChart } from '../../dist/knv2-lightweight-charts.js';
+
+const TF_MS = 60_000;                       // one-minute bars
+
+// ── History ──────────────────────────────────────────────────────────────────
+let price = 42_000;
+const bars = [];
+let slot = Math.floor(Date.now() / TF_MS) * TF_MS - 600 * TF_MS;
+for (let i = 0; i < 600; i += 1) {
+  const open = price;
+  const close = open * (1 + (Math.random() - 0.5) * 0.004);
+  bars.push({
+    time: slot,
+    open,
+    high: Math.max(open, close) * (1 + Math.random() * 0.001),
+    low: Math.min(open, close) * (1 - Math.random() * 0.001),
+    close,
+    volume: Math.round(Math.random() * 50),
+  });
+  price = close;
+  slot += TF_MS;
+}
+
+const chart = await createChart(document.getElementById('chart'), {
+  type: 'candles',
+  theme: 'dark',
+  priceScale: { lastPriceLabel: true, decimals: 1 },
+  timeScale: { rightMarginBars: 12 },
+});
+
+if (!chart) {
+  document.getElementById('msg').textContent = 'WebGL2 is not available in this browser.';
+} else {
+  chart.setData(bars);
+  chart.scrollToEnd();
+
+  // ── The tick loop ──────────────────────────────────────────────────────────
+  //
+  // ⚠ `update()`, NEVER `setData()`. update rewrites one instance in place and
+  //   allocates nothing; setData re-uploads the entire series. This is the
+  //   difference between a tab that idles and one that does not.
+  //
+  // ⚠ AND COALESCE TO ONE CALL PER ANIMATION FRAME. A fast feed can deliver
+  //   hundreds of messages a second; the engine redraws at the display's
+  //   refresh rate regardless, so anything beyond one update per frame is
+  //   marshalling work thrown away.
+  let forming = { ...bars[bars.length - 1] };
+  let pending = null;
+  let queued = false;
+
+  function push(bar) {
+    pending = bar;
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      if (pending) chart.update(pending);
+    });
+  }
+
+  // Stand-in for `socket.onmessage`. A real feed replaces this whole function.
+  function onTrade(px, size, tsMs) {
+    const s = Math.floor(tsMs / TF_MS) * TF_MS;
+    if (s !== forming.time) {
+      // A new bar: the previous one is final.
+      bars.push(forming);
+      forming = { time: s, open: px, high: px, low: px, close: px, volume: 0 };
+    } else {
+      forming.high = Math.max(forming.high, px);
+      forming.low = Math.min(forming.low, px);
+      forming.close = px;
+    }
+    forming.volume += size;
+    push({ ...forming });
+  }
+
+  let ticks = 0;
+  const timer = setInterval(() => {
+    price *= 1 + (Math.random() - 0.5) * 0.0008;
+    onTrade(price, Math.random() * 2, Date.now());
+    ticks += 1;
+    if (ticks % 10 === 0) {
+      const m = chart.metrics();
+      document.getElementById('msg').textContent =
+        `live · ${ticks.toLocaleString()} ticks · ${price.toFixed(1)} · ` +
+        `${m.barCount.toLocaleString()} bars · ${m.visibleBars} visible`;
+    }
+  }, 60);
+
+  // ⚠ Release both. A leaked chart holds a WebGL2 context.
+  window.addEventListener('pagehide', () => { clearInterval(timer); chart.remove(); });
+}
+</script>
+
+<!--
+  ── A real WebSocket looks like this ─────────────────────────────────────────
+
+  const socket = new WebSocket('wss://your-feed.example/stream?symbol=BTCUSDT');
+
+  socket.onmessage = (ev) => {
+    const t = JSON.parse(ev.data);
+    push({ time: t.time, open: t.open, high: t.high, low: t.low, close: t.close });
+  };
+
+  // On reconnect, refetch history and setData — do not try to splice a gap.
+  socket.onclose = () => setTimeout(async () => {
+    chart.setData(await fetch('/api/bars').then((r) => r.json()));
+    connect();
+  }, 1000);
+-->
+</body>
+</html>

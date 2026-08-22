@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KNv2 Lightweight Charting Engine — React</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #070a0e; color: #e5e7eb;
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header { padding: 18px 20px 0; }
+  h1 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+  p.sub { margin: 0; color: #8b94a3; font-size: 12.5px; }
+  .bar { display: flex; gap: 6px; padding: 14px 20px; flex-wrap: wrap; }
+  button {
+    background: #121821; color: #cbd5e1; border: 1px solid #212b39;
+    border-radius: 6px; padding: 5px 11px; font-size: 12.5px; cursor: pointer; font-family: inherit;
+  }
+  button[aria-pressed="true"] { background: #1d4ed8; border-color: #2563eb; color: #fff; }
+  .legend { padding: 0 20px 16px; color: #94a3b8; font-size: 12.5px; font-variant-numeric: tabular-nums; min-height: 20px; }
+  .legend b { color: #e5e7eb; }
+</style>
+
+<!--
+  ⚠ REACT IS PULLED FROM A CDN HERE ONLY SO THIS EXAMPLE RUNS WITH NO BUILD
+    STEP. In a real app you `npm install knv2-lightweight-charts` and import
+    `knv2-lightweight-charts/react`; React stays a peer dependency and is never bundled
+    into the package.
+-->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19",
+    "react-dom/client": "https://esm.sh/react-dom@19/client",
+    "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime"
+  }
+}
+</script>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="module">
+import React, { useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import KNv2Chart from '../../dist/knv2-lightweight-charts.react.js';
+
+const h = React.createElement;
+
+function makeBars(n) {
+  const out = [];
+  let price = 180;
+  let t = Math.floor(Date.now() / 1000) - n * 86400;
+  for (let i = 0; i < n; i += 1) {
+    const open = price;
+    const close = open + (Math.sin(i / 30) * 0.8) + (Math.random() - 0.5) * 2;
+    out.push({
+      time: t, open, close,
+      high: Math.max(open, close) + Math.random(),
+      low: Math.min(open, close) - Math.random(),
+      volume: Math.round(1e5 + Math.random() * 9e5),
+    });
+    price = close;
+    t += 86400;
+  }
+  return out;
+}
+
+const TOOLS = ['none', 'trendline', 'hline', 'arrow', 'text'];
+
+function App() {
+  // ⚠ useMemo — NOT `bars={makeBars(1200)}`. An inline array is a new reference
+  //   on every render, which re-uploads the whole series on every render.
+  const bars = useMemo(() => makeBars(1200), []);
+
+  const chart = useRef(null);
+  const [tool, setTool] = useState('none');
+  const [legend, setLegend] = useState(null);
+
+  const fmt = (v) => v.toFixed(2);
+
+  return h('div', null,
+    h('header', null,
+      h('h1', null, 'KNv2 Lightweight Charting Engine — React'),
+      h('p', { className: 'sub' }, 'The supplied component handles the async mount, teardown and Strict Mode.'),
+    ),
+
+    h('div', { className: 'bar' },
+      ...TOOLS.map((t) => h('button', {
+        key: t,
+        'aria-pressed': tool === t,
+        onClick: () => setTool(t),
+      }, t)),
+      h('button', { onClick: () => chart.current?.undo() }, 'Undo'),
+      h('button', { onClick: () => chart.current?.fitContent() }, 'Fit'),
+      h('button', { onClick: () => chart.current?.clearDrawings() }, 'Clear'),
+    ),
+
+    h('div', { className: 'legend' },
+      legend
+        ? h(React.Fragment, null,
+            new Date(legend.time).toLocaleDateString(), '  O ',
+            h('b', null, fmt(legend.open)), '  H ',
+            h('b', null, fmt(legend.high)), '  L ',
+            h('b', null, fmt(legend.low)), '  C ',
+            h('b', { style: { color: legend.close >= legend.open ? '#22c55e' : '#ef4444' } }, fmt(legend.close)),
+          )
+        : 'Hover the chart.',
+    ),
+
+    h(KNv2Chart, {
+      ref: chart,
+      bars,
+      tool,
+      type: 'candles',
+      theme: 'dark',
+      crosshair: { mode: 'magnet' },
+      priceScale: { marginTop: 0.1, marginBottom: 0.1, lastPriceLabel: true },
+      onCrosshairMove: setLegend,
+      onReady: (api) => { if (!api) alert('WebGL2 is not available in this browser.'); },
+      // ⚠ A text object arrives with a placeholder — prompt and fill it in, or
+      //   remove it if the user cancels.
+      onDrawingChange: (id, ev, api) => {
+        if (ev !== 'created') return;
+        const d = api.drawing(id);
+        if (d?.tool !== 'text' && d?.tool !== 'callout') return;
+        const text = window.prompt('Label');
+        if (text) api.setDrawingText(id, text);
+        else api.removeDrawing(id);
+      },
+      style: { height: 460, width: 'auto', margin: '0 20px', border: '1px solid #161c26', borderRadius: 10 },
+    }),
+  );
+}
+
+createRoot(document.getElementById('root')).render(
+  // StrictMode double-mounts every component in development. The component
+  // handles it; leaving it on here is the point of the example.
+  h(React.StrictMode, null, h(App)),
+);
+</script>
+</body>
+</html>
